@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Нумерологический Портал{% endblock %}</title>
+    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        .user-menu {
+            position: relative;
+        }
+        
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px;
+            min-width: 200px;
+            z-index: 1000;
+            box-shadow: var(--glass-shadow);
+            margin-top: 10px;
+        }
+        
+        .user-dropdown.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .user-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .user-dropdown-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .user-dropdown-divider {
+            height: 1px;
+            background: var(--glass-border);
+            margin: 10px 0;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .auth-button {
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .login-button {
+            background: transparent;
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+        }
+        
+        .login-button:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .register-button {
+            background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
+            border: none;
+            color: var(--dark-purple);
+        }
+        
+        .register-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="orb-1 energy-orb"></div>
+        <div class="orb-2 energy-orb"></div>
+    </div>
+    
+   
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <a href="{% url 'home' %}" class="logo-link">
+                    <h1><i class="fas fa-crystal-ball"></i> Нумерологический прогноз</h1>
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <a href="{% url 'home' %}#year-section" class="nav-link">
+                    <i class="fas fa-sun"></i> Год
+                </a>
+                <a href="{% url 'home' %}#month-section" class="nav-link">
+                    <i class="fas fa-moon"></i> Месяц
+                </a>
+                <a href="{% url 'home' %}#day-section" class="nav-link">
+                    <i class="fas fa-star"></i> День
+                </a>
+            </nav>
+            
+            <div class="user-section">
+                {% if user.is_authenticated %}
+                <div class="user-menu">
+                    <button class="user-toggle" id="userToggle">
+                        <div class="user-avatar-small">
+                            {% if user.profile.avatar %}
+                                <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+                            {% else %}
+                                <i class="fas fa-user"></i>
+                            {% endif %}
+                        </div>
+                        <span class="user-name">{{ user.username }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="{% url 'profile' %}" class="user-dropdown-item">
+                            <i class="fas fa-user"></i> Мой профиль
+                        </a>
+                        <a href="{% url 'profile' %}" class="user-dropdown-item">
+                            <i class="fas fa-history"></i> История расчетов
+                        </a>
+                        <a href="#" class="user-dropdown-item">
+                            <i class="fas fa-cog"></i> Настройки
+                        </a>
+                        <div class="user-dropdown-divider"></div>
+                        <a href="{% url 'logout' %}" class="user-dropdown-item logout-item">
+                            <i class="fas fa-sign-out-alt"></i> Выйти
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="auth-buttons">
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="auth-button login-button">
+                        <i class="fas fa-sign-in-alt"></i> Войти
+                    </a>
+                    <a href="{% url 'register' %}" class="auth-button register-button">
+                        <i class="fas fa-user-plus"></i> Регистрация
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <p class="tagline">Узнай ритм своего года, месяца и дня.</p>
+    </header>
+
+    <div class="container">
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                {{ message }}
+                <button class="alert-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer>
+            <p>© {% now "Y" %} </p>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const userToggle = document.getElementById('userToggle');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userToggle && userDropdown) {
+                userToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('show');
+                });
+                
+    
+                document.addEventListener('click', function(e) {
+                    if (!userToggle.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+            }
+            
+        
+            document.querySelectorAll('.alert-close').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.parentElement.style.opacity = '0';
+                    setTimeout(() => {
+                        this.parentElement.style.display = 'none';
+                    }, 300);
+                });
+            });
+            
+        
+            setTimeout(() => {
+                document.querySelectorAll('.alert').forEach(alert => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 300);
+                });
+            }, 5000);
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

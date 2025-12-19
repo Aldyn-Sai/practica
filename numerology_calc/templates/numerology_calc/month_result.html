@@ -1,0 +1,54 @@
+{% extends 'numerology_calc/base.html' %}
+{% load static %}
+
+{% block body_class %}result-page{% endblock %}
+
+{% block content %}
+<div class="result-container">
+    
+    <a href="{% url 'home' %}" class="back-button">
+        <i class="fas fa-arrow-left"></i> Новый расчет
+    </a>
+    
+   
+    <div class="result-header">
+        <h2><i class="fas fa-calendar-week"></i> Ваш прогноз на {{ month_name }}</h2>
+        <p class="result-subtitle">Персональный год: {{ personal_year }}</p>
+    </div>
+    
+   
+    <div class="result-short">
+        <div class="result-numbers">
+            <div class="number-circle large">
+                <span>{{ personal_month }}</span>
+                <small>Месяц</small>
+            </div>
+        </div>
+        
+        <div class="result-text">
+            <h3>{{ month_description.title }}</h3>
+            <p>{{ month_description.short }}</p>
+        </div>
+    </div>
+    
+   
+    <div class="result-full">
+        <div class="detailed-content">
+            <div class="detail-block">
+                <h3><i class="fas fa-calendar-week"></i> Прогноз на {{ month_name }}: Число {{ personal_month }}</h3>
+                <p>{{ month_description.full|linebreaks }}</p>
+            </div>
+        </div>
+    </div>
+    
+   
+    <div class="action-buttons">
+        <a href="{% url 'home' %}#year-section" class="mystic-button">
+            <i class="fas fa-sun"></i> Рассчитать год
+        </a>
+        <a href="{% url 'home' %}#day-section" class="mystic-button">
+            <i class="fas fa-star"></i> Рассчитать день
+        </a>
+    </div>
+</div>
+{% endblock %}

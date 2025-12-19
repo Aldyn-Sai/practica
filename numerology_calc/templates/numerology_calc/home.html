@@ -1,0 +1,248 @@
+{% extends 'numerology_calc/base.html' %}
+{% load static %}
+
+{% block title %}{% if user.is_authenticated %}🔮 Добро пожаловать, {{ user.username }}!{% else %}🔮 Код Судьбы | Нумерологический Портал{% endif %}{% endblock %}
+
+{% block content %}
+<!-- Приветствие для авторизованных пользователей -->
+{% if user.is_authenticated %}
+<div class="welcome-section">
+    <div class="welcome-card">
+        <div class="welcome-content">
+            <h2><i class="fas fa-hand-sparkles"></i> Добро пожаловать, {{ user.username }}!</h2>
+            <p class="welcome-subtitle">Готовы раскрыть тайны чисел? У вас уже <strong>{{ user_calculations }}</strong> расчетов!</p>
+            
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <i class="fas fa-calculator"></i>
+                    <span>{{ user_calculations }}</span>
+                    <small>Расчетов</small>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-crown"></i>
+                    <span>Новичок</span>
+                    <small>Уровень</small>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-gem"></i>
+                    <span>0</span>
+                    <small>Дней подряд</small>
+                </div>
+            </div>
+            
+            <div class="welcome-actions">
+                <a href="#year-section" class="welcome-button primary">
+                    <i class="fas fa-bolt"></i> Начать новый расчет
+                </a>
+                <a href="{% url 'profile' %}" class="welcome-button secondary">
+                    <i class="fas fa-user-circle"></i> Мой профиль
+                </a>
+            </div>
+        </div>
+        
+        <div class="welcome-tip">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>Совет дня:</strong> Рассчитайте свой персональный год, чтобы понять основную энергию на {{ year_form.initial.target_year|default:"2025" }} год.
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Секция 1: Прогноз на Год -->
+<section id="year-section" class="calculator-section">
+    <div class="section-header">
+        <h2><i class="fas fa-calendar-alt"></i> Прогноз на Год</h2>
+        <p class="section-subtitle">Персональное Число Года + Энергия Года</p>
+    </div>
+    
+    <div class="calculator-card">
+        {% if not user.is_authenticated %}
+        <!-- Заблокированный контент для неавторизованных -->
+        <div class="locked-overlay">
+            <div class="locked-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="locked-message">
+                <h3>Доступ к расчетам закрыт</h3>
+                <p>Для использования калькулятора необходимо войти в систему или зарегистрироваться</p>
+                <div class="locked-actions">
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="mystic-button">
+                        <i class="fas fa-sign-in-alt"></i> Войти
+                    </a>
+                    <a href="{% url 'register' %}" class="mystic-button" style="background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));">
+                        <i class="fas fa-user-plus"></i> Зарегистрироваться
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <form method="post" action="{% url 'calculate_year' %}">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                {{ year_form.birth_date.label_tag }}
+                {{ year_form.birth_date }}
+                {% if year_form.birth_date.errors %}
+                <div class="error-message">
+                    {{ year_form.birth_date.errors }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="input-group">
+                {{ year_form.target_year.label_tag }}
+                {{ year_form.target_year }}
+                {% if year_form.target_year.errors %}
+                <div class="error-message">
+                    {{ year_form.target_year.errors }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="mystic-button" {% if not user.is_authenticated %}disabled{% endif %}>
+                <i class="fas fa-calculator"></i> 
+                {% if user.is_authenticated %}
+                Рассчитать прогноз на год
+                {% else %}
+                Войдите для расчета
+                {% endif %}
+            </button>
+            
+            {% if not user.is_authenticated %}
+            <div class="auth-promo">
+                <p><i class="fas fa-info-circle"></i> После регистрации вы сможете сохранять все расчеты и отслеживать свою нумерологическую историю</p>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</section>
+
+
+<section id="year-section" class="calculator-section">
+    <div class="section-header">
+        <h2><i class="fas fa-calendar-alt"></i> Прогноз на Год</h2>
+        <p class="section-subtitle">Персональное Число Года + Энергия Года</p>
+    </div>
+    
+    <div class="calculator-card">
+        <form method="post" action="{% url 'calculate_year' %}">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                {{ year_form.birth_date.label_tag }}
+                {{ year_form.birth_date }}
+                {% if year_form.birth_date.errors %}
+                <div class="error-message">
+                    {{ year_form.birth_date.errors }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="input-group">
+                {{ year_form.target_year.label_tag }}
+                {{ year_form.target_year }}
+                {% if year_form.target_year.errors %}
+                <div class="error-message">
+                    {{ year_form.target_year.errors }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="mystic-button">
+                <i class="fas fa-calculator"></i> Рассчитать прогноз на год
+            </button>
+        </form>
+    </div>
+</section>
+
+
+<section id="month-section" class="calculator-section">
+    <div class="section-header">
+        <h2><i class="fas fa-calendar-week"></i> Прогноз на Месяц</h2>
+        <p class="section-subtitle">Персональное Число Месяца</p>
+    </div>
+    
+    <div class="calculator-card">
+        <div class="note-box">
+            <i class="fas fa-info-circle"></i> 
+            Для расчета нужен ваш Персональный Год. Если вы его уже рассчитали выше, введите его в поле ниже.
+        </div>
+        
+        <form method="post" action="{% url 'calculate_month' %}">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                {{ month_form.personal_year.label_tag }}
+                {{ month_form.personal_year }}
+                <small class="form-text">{{ month_form.personal_year.help_text }}</small>
+                {% if month_form.personal_year.errors %}
+                <div class="error-message">
+                    {{ month_form.personal_year.errors }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="input-group">
+                {{ month_form.month.label_tag }}
+                {{ month_form.month }}
+                {% if month_form.month.errors %}
+                <div class="error-message">
+                    {{ month_form.month.errors }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="mystic-button">
+                <i class="fas fa-moon"></i> Узнать прогноз на месяц
+            </button>
+        </form>
+    </div>
+</section>
+
+
+<section id="day-section" class="calculator-section">
+    <div class="section-header">
+        <h2><i class="fas fa-calendar-day"></i> Прогноз на День</h2>
+        <p class="section-subtitle">Личное Число Дня</p>
+    </div>
+    
+    <div class="calculator-card">
+        <form method="post" action="{% url 'calculate_day' %}">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                {{ day_form.target_date.label_tag }}
+                {{ day_form.target_date }}
+                {% if day_form.target_date.errors %}
+                <div class="error-message">
+                    {{ day_form.target_date.errors }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="mystic-button">
+                <i class="fas fa-star"></i> Расшифровать знак дня
+            </button>
+        </form>
+    </div>
+</section>
+
+<!-- Информационный блок -->
+<section class="info-section">
+    <h2><i class="fas fa-book-open"></i> О методике</h2>
+    <div class="info-card">
+        <p>Нумерология — это древний язык чисел, с помощью которого можно расшифровать вибрации Вселенной. Каждая дата рождения и каждая календарная дата несут уникальную энергетику, которая влияет на события, отношения и возможности.</p>
+        <p>На этом портале используются проверенные нумерологические формулы для расчета:</p>
+        <ul>
+            <li><strong>Персонального Числа Года</strong> — основной тон и тема периода</li>
+            <li><strong>Энергии Года</strong> — глубинная вибрация, влияющая на все сферы жизни</li>
+            <li><strong>Числа Месяца</strong> — фокус внимания на конкретный период</li>
+            <li><strong>Числа Дня</strong> — рекомендации для ежедневных решений</li>
+        </ul>
+        <p class="disclaimer"><i class="fas fa-exclamation-circle"></i> Данный прогноз носит рекомендательный характер. Помните, что вы — творец своей судьбы.</p>
+    </div>
+</section>
+{% endblock %}

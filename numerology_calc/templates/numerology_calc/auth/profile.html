@@ -1,0 +1,677 @@
+{% extends 'numerology_calc/base.html' %}
+{% load static %}
+
+{% block title %} Мой профиль {% endblock %}
+
+{% block body_class %}profile-page{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h2><i class="fas fa-user-astronaut"></i> Мой профиль</h2>
+        <p class="profile-subtitle">Здесь хранится ваша нумерологическая история</p>
+    </div>
+    
+    <div class="profile-layout">
+        <div class="profile-sidebar">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="Аватар" class="avatar-image">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-crystal-ball"></i>
+                        </div>
+                    {% endif %}
+                    <div class="avatar-upload">
+                        <button class="upload-button">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <h3>{{ user.username }}</h3>
+                    <p class="user-email">{{ user.email }}</p>
+                    
+                    {% if user.profile.birth_date %}
+                    <div class="profile-detail">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>{{ user.profile.birth_date|date:"d.m.Y" }}</span>
+                        {% if user.profile.get_age %}
+                        <span class="age">({{ user.profile.get_age }} лет)</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="profile-detail">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>С нами с {{ user.date_joined|date:"d.m.Y" }}</span>
+                    </div>
+                    
+                    <div class="profile-detail">
+                        <i class="fas fa-calculator"></i>
+                        <span>Расчетов: {{ user.profile.calculations_count }}</span>
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <a href="{% url 'logout' %}" class="profile-button logout-button">
+                        <i class="fas fa-sign-out-alt"></i> Выйти
+                    </a>
+                </div>
+            </div>
+            
+            <div class="stats-card">
+                <h4><i class="fas fa-chart-bar"></i> Ваша статистика</h4>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ user.profile.calculations_count }}</div>
+                        <div class="stat-label">Всего расчетов</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Сохранено</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Дней подряд</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-main">
+            <div class="history-card">
+                <div class="card-header">
+                    <h4><i class="fas fa-history"></i> История расчетов</h4>
+                    <button class="clear-history">
+                        <i class="fas fa-trash"></i> Очистить
+                    </button>
+                </div>
+                
+                <div class="history-list">
+                    {% if user.profile.calculations_count == 0 %}
+                    <div class="empty-history">
+                        <i class="fas fa-calendar-plus"></i>
+                        <h5>История расчетов пуста</h5>
+                        <p>Начните с первого расчета, чтобы увидеть здесь историю</p>
+                        <a href="{% url 'home' %}" class="mystic-button">
+                            <i class="fas fa-calculator"></i> Сделать первый расчет
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="history-item">
+                        <div class="history-type">
+                            <span class="type-badge year-badge">Год</span>
+                        </div>
+                        <div class="history-content">
+                            <h5>Прогноз на 2025 год</h5>
+                            <p class="history-date">Рассчитано сегодня</p>
+                            <p class="history-result">Число года: <strong>5</strong></p>
+                        </div>
+                        <div class="history-actions">
+                            <button class="history-action">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="history-action">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+    
+            <div class="quick-actions">
+                <h4><i class="fas fa-bolt"></i> Быстрые действия</h4>
+                <div class="actions-grid">
+                    <a href="{% url 'calculate_year' %}" class="action-button">
+                        <i class="fas fa-sun"></i>
+                        <span>Рассчитать год</span>
+                    </a>
+                    <a href="{% url 'calculate_month' %}" class="action-button">
+                        <i class="fas fa-moon"></i>
+                        <span>Рассчитать месяц</span>
+                    </a>
+                    <a href="{% url 'calculate_day' %}" class="action-button">
+                        <i class="fas fa-star"></i>
+                        <span>Рассчитать день</span>
+                    </a>
+                    <a href="#" class="action-button">
+                        <i class="fas fa-book"></i>
+                        <span>Мои заметки</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-page {
+        background: linear-gradient(135deg, var(--dark-purple), var(--deep-blue));
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+    
+    .profile-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .profile-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .profile-header h2 {
+        color: var(--primary-gold);
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .profile-subtitle {
+        color: var(--text-gray);
+        font-size: 1.2rem;
+    }
+    
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 30px;
+    }
+    
+    @media (max-width: 992px) {
+        .profile-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .profile-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .profile-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid var(--glass-border);
+        text-align: center;
+    }
+    
+    .profile-avatar {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 25px;
+    }
+    
+    .avatar-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary-gold);
+        box-shadow: 0 0 20px var(--primary-gold);
+    }
+    
+    .avatar-placeholder {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-gold), var(--neon-purple));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        color: var(--dark-purple);
+        border: 3px solid var(--primary-gold);
+    }
+    
+    .avatar-upload {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .upload-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--neon-purple);
+        border: 2px solid var(--primary-gold);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+    
+    .upload-button:hover {
+        transform: scale(1.1);
+        background: var(--primary-gold);
+    }
+    
+    .profile-info h3 {
+        color: var(--text-light);
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+    
+    .user-email {
+        color: var(--text-gray);
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+    
+    .profile-detail {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+    
+    .profile-detail i {
+        color: var(--primary-gold);
+        width: 20px;
+    }
+    
+    .age {
+        color: var(--text-gray);
+        font-size: 0.9rem;
+    }
+    
+    .profile-actions {
+        margin-top: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .profile-button {
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(15, 21, 37, 0.5);
+        border: 1px solid var(--glass-border);
+        color: var(--text-light);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.3s;
+    }
+    
+    .profile-button:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--primary-gold);
+        transform: translateY(-3px);
+    }
+    
+    .logout-button {
+        background: rgba(157, 0, 255, 0.1);
+        border-color: var(--neon-purple);
+    }
+    
+    .logout-button:hover {
+        background: rgba(157, 0, 255, 0.2);
+    }
+    
+    .stats-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid var(--glass-border);
+    }
+    
+    .stats-card h4 {
+        color: var(--primary-gold);
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 15px;
+        background: rgba(15, 21, 37, 0.3);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 215, 0, 0.1);
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--primary-gold);
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-gray);
+    }
+    
+    .profile-main {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .history-card,
+    .settings-card,
+    .quick-actions {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid var(--glass-border);
+    }
+    
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .card-header h4 {
+        color: var(--text-light);
+        font-size: 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+    
+    .clear-history {
+        background: transparent;
+        border: 1px solid var(--neon-purple);
+        color: var(--neon-purple);
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+    }
+    
+    .clear-history:hover {
+        background: rgba(157, 0, 255, 0.1);
+    }
+    
+    .empty-history {
+        text-align: center;
+        padding: 50px 20px;
+    }
+    
+    .empty-history i {
+        font-size: 4rem;
+        color: var(--primary-gold);
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+    
+    .empty-history h5 {
+        color: var(--text-light);
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+    
+    .empty-history p {
+        color: var(--text-gray);
+        margin-bottom: 25px;
+    }
+    
+    .history-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        background: rgba(15, 21, 37, 0.3);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 215, 0, 0.1);
+        margin-bottom: 15px;
+        transition: all 0.3s;
+    }
+    
+    .history-item:hover {
+        background: rgba(15, 21, 37, 0.5);
+        border-color: var(--primary-gold);
+    }
+    
+    .history-type {
+        flex-shrink: 0;
+    }
+    
+    .type-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .year-badge {
+        background: rgba(255, 215, 0, 0.2);
+        color: var(--primary-gold);
+        border: 1px solid var(--primary-gold);
+    }
+    
+    .history-content {
+        flex: 1;
+    }
+    
+    .history-content h5 {
+        color: var(--text-light);
+        margin-bottom: 5px;
+        font-size: 1.1rem;
+    }
+    
+    .history-date {
+        color: var(--text-gray);
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    
+    .history-result {
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+    
+    .history-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .history-action {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(15, 21, 37, 0.5);
+        border: 1px solid var(--glass-border);
+        color: var(--text-light);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+    
+    .history-action:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--primary-gold);
+        transform: scale(1.1);
+    }
+    
+    .settings-form {
+        margin-top: 20px;
+    }
+    
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    }
+    
+    .setting-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .setting-info h5 {
+        color: var(--text-light);
+        margin-bottom: 5px;
+        font-size: 1.1rem;
+    }
+    
+    .setting-info p {
+        color: var(--text-gray);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    /* Toggle switch */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+    
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(15, 21, 37, 0.5);
+        border: 1px solid var(--glass-border);
+        transition: .4s;
+        border-radius: 34px;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 3px;
+        background-color: var(--text-gray);
+        transition: .4s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+        background-color: var(--neon-purple);
+        border-color: var(--neon-purple);
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(28px);
+        background-color: white;
+    }
+    
+    .save-settings {
+        margin-top: 25px;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
+        color: var(--dark-purple);
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.3s;
+    }
+    
+    .save-settings:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+    }
+    
+    .quick-actions h4 {
+        color: var(--text-light);
+        margin-bottom: 25px;
+        font-size: 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .action-button {
+        padding: 25px;
+        background: rgba(15, 21, 37, 0.3);
+        border: 1px solid var(--glass-border);
+        border-radius: 15px;
+        text-decoration: none;
+        color: var(--text-light);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        transition: all 0.3s;
+    }
+    
+    .action-button:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--primary-gold);
+        transform: translateY(-5px);
+    }
+    
+    .action-button i {
+        font-size: 2.5rem;
+        color: var(--primary-gold);
+    }
+    
+    .action-button span {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
